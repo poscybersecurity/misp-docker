@@ -72,8 +72,8 @@ services:
           - PYPI_PYMISP_VERSION=${PYPI_PYMISP_VERSION}
           - PYPI_MISP_STIX_VERSION=${PYPI_MISP_STIX_VERSION}
     ports:
-      - "80"
-      - "443"
+      - "8080:80"
+      - "8443:443"
     depends_on:
       redis:
         condition: service_healthy
