@@ -5,22 +5,6 @@ networks:
     driver: bridge
 
 services:
-  traefik:
-    image: traefik:v3.3.3
-    restart: always
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    networks:
-      - misp_network
-
   mail:
     image: ixdotai/smtp
     environment:
@@ -91,7 +75,7 @@ services:
       start_interval: 30s
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.misp.rule=Host(`misp.seudominio.com`)"
+      - "traefik.http.routers.misp.rule=Host(`${MISP_DOMAIN}`)"
       - "traefik.http.routers.misp.entrypoints=websecure"
       - "traefik.http.routers.misp.tls.certresolver=myresolver"
     volumes:
