@@ -73,9 +73,11 @@ services:
       start_interval: 30s
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.misp.rule=Host(`${MISP_DOMAIN}`)"
+      - "traefik.http.routers.misp.rule=Host(`${MISP_DOMAIN}`)" # Domínio MISP
       - "traefik.http.routers.misp.entrypoints=websecure"
       - "traefik.http.routers.misp.tls.certresolver=myresolver"
+      - "traefik.http.services.misp.loadbalancer.server.port=80" # Porta do MISP (ou 443 se rodar SSL interno)
+
     volumes:
       - "./configs/:/var/www/MISP/app/Config/"
       - "./logs/:/var/www/MISP/app/tmp/logs/"
