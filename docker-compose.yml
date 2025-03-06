@@ -71,6 +71,9 @@ services:
           - PYPI_CYBOX_VERSION=${PYPI_CYBOX_VERSION}
           - PYPI_PYMISP_VERSION=${PYPI_PYMISP_VERSION}
           - PYPI_MISP_STIX_VERSION=${PYPI_MISP_STIX_VERSION}
+    ports:
+      - "80"
+      - "443"
     depends_on:
       redis:
         condition: service_healthy
