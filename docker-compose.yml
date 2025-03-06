@@ -53,6 +53,9 @@ services:
 
   misp-core:
     image: ghcr.io/misp/misp-docker/misp-core:${CORE_RUNNING_TAG:-latest}
+    ports:
+      - "8080:80"
+      - "8443:443"
     cap_add:
       - AUDIT_WRITE
     build:
