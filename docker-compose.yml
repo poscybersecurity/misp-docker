@@ -65,6 +65,7 @@ services:
       args:
           - CORE_TAG=${CORE_TAG:?Missing .env file, see README.md for instructions}
           - CORE_COMMIT=${CORE_COMMIT}
+          - CORE_FLAVOR=${CORE_FLAVOR:-full}
           - PHP_VER=${PHP_VER:?Missing .env file, see README.md for instructions}
           - PYPI_REDIS_VERSION=${PYPI_REDIS_VERSION}
           - PYPI_LIEF_VERSION=${PYPI_LIEF_VERSION}
@@ -179,11 +180,11 @@ services:
       - "AAD_MISP_ORGADMIN=${AAD_MISP_ORGADMIN}"
       - "AAD_MISP_SITEADMIN=${AAD_MISP_SITEADMIN}"
       - "AAD_CHECK_GROUPS=${AAD_CHECK_GROUPS}"
-      # Nginx settings
+      # nginx settings
       - "NGINX_X_FORWARDED_FOR=${NGINX_X_FORWARDED_FOR}"
       - "NGINX_SET_REAL_IP_FROM=${NGINX_SET_REAL_IP_FROM}"
       - "NGINX_CLIENT_MAX_BODY_SIZE=${NGINX_CLIENT_MAX_BODY_SIZE:-50M}"
-      # Proxy settings
+      # proxy settings
       - "PROXY_ENABLE=${PROXY_ENABLE}"
       - "PROXY_HOST=${PROXY_HOST}"
       - "PROXY_PORT=${PROXY_PORT}"
@@ -212,7 +213,7 @@ services:
       - "REDIS_HOST=${REDIS_HOST:-redis}"
       - "REDIS_PORT=${REDIS_PORT:-6379}"
       - "REDIS_PASSWORD=${REDIS_PASSWORD:-redispassword}"
-      # Debug setting 
+      # debug setting 
       - "DEBUG=${DEBUG}"
       # SMTP setting
       - "SMTP_FQDN=${SMTP_FQDN}"
@@ -233,7 +234,7 @@ services:
       - "PHP_FCGI_START_SERVERS=${PHP_FCGI_START_SERVERS:-2}"
       - "PHP_FCGI_SPARE_SERVERS=${PHP_FCGI_SPARE_SERVERS:-1}"
       - "PHP_FCGI_MAX_REQUESTS=${PHP_FCGI_MAX_REQUESTS:-0}"
-      # Additional PHP settings
+      # additional PHP settings
       - "PHP_SESSION_TIMEOUT=${PHP_SESSION_TIMEOUT:-60}"
       - "PHP_SESSION_COOKIE_TIMEOUT=${PHP_SESSION_COOKIE_TIMEOUT:-10080}"
       - "PHP_SESSION_DEFAULTS=${PHP_SESSION_DEFAULTS:-php}"
@@ -242,7 +243,7 @@ services:
       - "PHP_SESSION_COOKIE_SECURE=${PHP_SESSION_COOKIE_SECURE:-true}"
       - "PHP_SESSION_COOKIE_DOMAIN=${PHP_SESSION_COOKIE_DOMAIN}"
       - "PHP_SESSION_COOKIE_SAMESITE=${PHP_SESSION_COOKIE_SAMESITE:-Lax}"
-      # Security Settings
+      # security settings
       - "HSTS_MAX_AGE=${HSTS_MAX_AGE}"
       - "X_FRAME_OPTIONS=${X_FRAME_OPTIONS}"
       - "CONTENT_SECURITY_POLICY=${CONTENT_SECURITY_POLICY}"
@@ -254,14 +255,7 @@ services:
       args:
         - MODULES_TAG=${MODULES_TAG:?Missing .env file, see README.md for instructions}
         - MODULES_COMMIT=${MODULES_COMMIT}
-        - MODULES_INSTALL_FLAG=${MODULES_INSTALL_FLAG:?Missing .env file, see README.md for instructions}
-    environment:
-      - "REDIS_BACKEND=${REDIS_HOST:-redis}"
-      - "REDIS_PORT=${REDIS_PORT:-6379}"
-      - "REDIS_PW=${REDIS_PASSWORD:-redispassword}"
-    depends_on:
-      redis:
-        condition: service_healthy
+        - MODULES_FLAVOR=${MODULES_FLAVOR:-full}
     healthcheck:
       test: "/bin/bash -c '</dev/tcp/localhost/6666'"
       interval: 2s
@@ -269,6 +263,12 @@ services:
       retries: 3
       start_period: 5s
       start_interval: 5s
+    volumes:
+      # custom MISP modules are loaded at startup time
+      - "./custom/action_mod/:/custom/action_mod/"
+      - "./custom/expansion/:/custom/expansion/"
+      - "./custom/export_mod/:/custom/export_mod/"
+      - "./custom/import_mod/:/custom/import_mod/"
 
 volumes:
     mysql_data:
